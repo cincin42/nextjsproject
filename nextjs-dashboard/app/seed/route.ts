@@ -4,6 +4,10 @@ import { invoices, customers, revenue, users } from '../lib/placeholder-data';
 
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 
+async function setupExtensions() {
+  await sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
+}
+
 async function seedUsers() {
   await sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
   await sql`
@@ -103,6 +107,8 @@ async function seedRevenue() {
 
 export async function GET() {
   try {
+    await setupExtensions();
+
     const result = await sql.begin((sql) => [
       seedUsers(),
       seedCustomers(),
